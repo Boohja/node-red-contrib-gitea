@@ -1,0 +1,93 @@
+<script type="text/javascript">
+  RED.nodes.registerType('gitea-get-issue-labels', {
+    category: 'Gitea',
+    color: '#84aa5a',
+    icon: 'gitea.svg',
+    defaults: {
+      name: {value: null},
+      integration: {value: "", type: "gitea integration", required: true},
+      repoOwner: {value: null},
+      repo: {value: null},
+      issue: {value: ""}
+    },
+    outputLabels: ["success", "error"],
+    inputs: 1,
+    outputs: 2,
+    label: function () {
+      return this.name || "get issue labels";
+    },
+    paletteLabel: 'get issue labels'
+  });
+</script>
+
+<script type="text/html" data-template-name="gitea-get-issue-labels">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-integration"><i class="fa fa-tag"></i> Integration</label>
+    <input type="text" id="node-input-integration">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-repo"><i class="fa fa-code-fork"></i> Repo name</label>
+    <input type="text" id="node-input-repo" placeholder="msg.repo">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-repoOwner"><i class="fa fa-building"></i> Repo owner</label>
+    <input type="text" id="node-input-repoOwner" placeholder="msg.repoOwner">
+  </div>
+
+  <hr />
+
+  <div class="form-row">
+    <label for="node-input-issue"><i class="fa fa-hashtag"></i> Issue number</label>
+    <input type="text" id="node-input-issue" placeholder="msg.issue">
+  </div>
+
+</script>
+
+<script type="text/html" data-help-name="gitea-get-issue-labels">
+  <h3>Details</h3>
+  <p>Get all labels assigned to a given issue.</p>
+
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>msg.repo
+      <span class="property-type">string</span>
+    </dt>
+    <dd> The repository name for this call</dd>
+
+    <dt>msg.repoOwner
+      <span class="property-type">string</span>
+    </dt>
+    <dd> The owner of the repository, either a user or a company </dd>
+
+    <dt>msg.issue
+      <span class="property-type">int</span>
+    </dt>
+    <dd> Issue number</dd>
+  </dl>
+
+  <h3>Outputs</h3>
+  <ol class="node-ports">
+    <li>Success
+      <dl class="message-properties">
+        <dt>msg.payload <span class="property-type">array</span></dt>
+        <dd>list of labels</dd>
+      </dl>
+    </li>
+    <li>Error
+      <dl class="message-properties">
+        <dt>msg.error <span class="property-type">string</span></dt>
+        <dd>the error that occurred.</dd>
+      </dl>
+    </li>
+  </ol>
+
+  <h3>API Reference</h3>
+  <a href="https://docs.gitea.com/api/1.20/#tag/issue/operation/issueGetLabels">https://docs.gitea.com/api/1.20/#tag/issue/operation/issueGetLabels</a>
+</script>

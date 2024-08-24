@@ -1,0 +1,36 @@
+{
+  "name": "node-red-gitea",
+  "version": "0.1.0",
+  "description": "Node-RED Gitea nodes",
+  "keywords": [
+    "node-red",
+    "gitea"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Boohja/node-red-gitea.git"
+  },
+  "author": "Boohja",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Boohja/node-red-gitea/issues"
+  },
+  "homepage": "https://github.com/Boohja/node-red-gitea",
+  "node-red": {
+    "version": ">=4.0.0",
+    "nodes": {
+      "gitea-config": "gitea-config.js",
+      "gitea-get-issues": "get-issues.js",
+      "gitea-get-issue-labels": "get-issue-labels.js",
+      "gitea-send-issue-comment": "send-issue-comment.js"
+    }
+  },
+  "devDependencies": {
+    "@types/node-red": "^1.3.5",
+    "node-red": "^4.0.2",
+    "node-red-node-test-helper": "^0.3.4"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}

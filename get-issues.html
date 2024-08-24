@@ -1,0 +1,231 @@
+<script type="text/javascript">
+  RED.nodes.registerType('gitea-get-issues', {
+    category: 'Gitea',
+    color: '#84aa5a',
+    icon: 'gitea.svg',
+    defaults: {
+      name: {value: null},
+      integration: {value: "", type: "gitea integration", required: true},
+      repoOwner: {value: null},
+      repo: {value: null},
+      q: {value: null},
+      issueType: {value: ""},
+      state: {value: ""},
+      labels: {value: ""},
+      milestones: {value: ""},
+      since: {value: ""},
+      before: {value: ""},
+      created_by: {value: ""},
+      assigned_by: {value: ""},
+      mentioned_by: {value: ""},
+      limit: {value: null},
+      page: {value: null}
+    },
+    outputLabels: ["success", "error"],
+    inputs: 1,
+    outputs: 2,
+    label: function () {
+      return this.name || "get issues";
+    },
+    paletteLabel: 'get issues',
+    oneditprepare: function () {
+      $("#node-input-state").typedInput({
+        type: "state", types: [{
+          value: "state",
+          options: [
+            {value: "", label: ""},
+            {value: "closed", label: "closed"},
+            {value: "open", label: "open"},
+            {value: "all", label: "all"}
+          ]
+        }]
+      })
+
+      $("#node-input-issueType").typedInput({
+        type: "issueType", types: [{
+          value: "issueType",
+          options: [
+            {value: "", label: ""},
+            {value: "issues", label: "issues"},
+            {value: "pulls", label: "pulls"}
+          ]
+        }]
+      })
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="gitea-get-issues">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-integration"><i class="fa fa-tag"></i> Integration</label>
+    <input type="text" id="node-input-integration">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-repo"><i class="fa fa-code-fork"></i> Repo name</label>
+    <input type="text" id="node-input-repo" placeholder="msg.repo">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-repoOwner"><i class="fa fa-building"></i> Repo owner</label>
+    <input type="text" id="node-input-repoOwner" placeholder="msg.repoOwner">
+  </div>
+
+  <hr />
+
+  <div class="form-row">
+    <label for="node-input-q"><i class="fa fa-search"></i> Search</label>
+    <input type="text" id="node-input-q">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-issueType"><i class="fa fa-search"></i> Type</label>
+    <input type="text" id="node-input-issueType">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-state"><i class="fa fa-search"></i> State</label>
+    <input type="text" id="node-input-state">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-labels"><i class="fa fa-search"></i> Labels</label>
+    <input type="text" id="node-input-labels">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-milestones"><i class="fa fa-search"></i> Milestones</label>
+    <input type="text" id="node-input-milestones">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-since"><i class="fa fa-search"></i> Since</label>
+    <input type="text" id="node-input-since">
+  </div>
+
+  <hr />
+
+  <p>
+    <i class="fa fa-info-circle"></i>
+    Leave <code>page</code> empty to automatically fetch all entries.
+  </p>
+
+  <div id="pagination-config">
+    <div class="form-row">
+      <label for="node-input-page"><i class="fa fa-hashtag"></i> Page</label>
+      <input type="text" id="node-input-page" placeholder="msg.page">
+    </div>
+
+    <div class="form-row">
+      <label for="node-input-limit"><i class="fa fa-hashtag"></i> Limit</label>
+      <input type="text" id="node-input-limit" placeholder="msg.limit">
+    </div>
+  </div>
+
+</script>
+
+<script type="text/html" data-help-name="gitea-get-issues">
+  <h3>Details</h3>
+  <p>Get all issues based on the query parameters. Empty parameters get ignored for the query.</p>
+
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>msg.repo
+      <span class="property-type">string</span>
+    </dt>
+    <dd> The repository name for this call</dd>
+
+    <dt>msg.repoOwner
+      <span class="property-type">string</span>
+    </dt>
+    <dd> The owner of the repository, either a user or a company </dd>
+
+    <dt class="optional">msg.q
+      <span class="property-type">string | null</span>
+    </dt>
+    <dd> The query or search string to filter issues by (searchs by title or issue body)</dd>
+
+    <dt class="optional">msg.issueType
+      <span class="property-type">string | null</span>
+    </dt>
+    <dd> It's either everything, an actual issue or a pull request</dd>
+
+    <dt class="optional">msg.state
+      <span class="property-type">string | null</span>
+    </dt>
+    <dd> State of issues to filter by, either open, closed or all</dd>
+
+    <dt class="optional">msg.labels
+      <span class="property-type">string | null</span>
+    </dt>
+    <dd> Comma separated list of label names. Fetch only issues that have any of this labels. Non existent labels are discarded</dd>
+
+    <dt class="optional">msg.milestones
+      <span class="property-type">string | null</span>
+    </dt>
+    <dd> Comma separated list of milestone names or ids. It uses names and fall back to ids. Fetch only issues that have any of this milestones. Non existent milestones are discarded</dd>
+
+    <dt class="optional">msg.since
+      <span class="property-type">date-time | null</span>
+    </dt>
+    <dd> Only show items updated after the given time. This is a timestamp in RFC 3339 format</dd>
+
+    <dt class="optional">msg.before
+      <span class="property-type">date-time | null</span>
+    </dt>
+    <dd> Only show items updated before the given time. This is a timestamp in RFC 3339 format</dd>
+
+    <dt class="optional">msg.created_by
+      <span class="property-type">string | null</span>
+    </dt>
+    <dd> Only show items which were created by the given user</dd>
+
+    <dt class="optional">msg.assigned_by
+      <span class="property-type">string | null</span>
+    </dt>
+    <dd> Only show items for which the given user is assigned</dd>
+
+    <dt class="optional">msg.mentioned_by
+      <span class="property-type">string | null</span>
+    </dt>
+    <dd> Only show items in which the given user was mentioned</dd>
+
+    <dt class="optional">msg.page
+      <span class="property-type">number | null</span>
+    </dt>
+    <dd> The page to start with. Leave `page` and `limit` empty to automatically fetch all entries.</dd>
+
+    <dt class="optional">msg.limit
+      <span class="property-type">string | null</span>
+    </dt>
+    <dd> The amount of entries to fetch per page. Leave `page` and `limit` empty to automatically fetch all entries.</dd>
+  </dl>
+
+  <h3>Outputs</h3>
+  <ol class="node-ports">
+    <li>Success
+      <dl class="message-properties">
+        <dt>msg.payload <span class="property-type">array</span></dt>
+        <dd>list of issues</dd>
+      </dl>
+      <dl class="message-properties">
+        <dt>msg.total <span class="property-type">number</span></dt>
+        <dd>total amount of items for this query</dd>
+      </dl>
+    </li>
+    <li>Error
+      <dl class="message-properties">
+        <dt>msg.error <span class="property-type">string</span></dt>
+        <dd>the error that occurred.</dd>
+      </dl>
+    </li>
+  </ol>
+
+  <h3>API Reference</h3>
+  <a href="https://docs.gitea.com/api/1.20/#tag/issue/operation/issueSearchIssues">https://docs.gitea.com/api/1.20/#tag/issue/operation/issueSearchIssues</a>
+</script>

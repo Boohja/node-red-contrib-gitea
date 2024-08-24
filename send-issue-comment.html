@@ -1,0 +1,104 @@
+<script type="text/javascript">
+  RED.nodes.registerType('gitea-send-issue-comment', {
+    category: 'Gitea',
+    color: '#84aa5a',
+    icon: 'gitea.svg',
+    defaults: {
+      name: {value: null},
+      integration: {value: "", type: "gitea integration", required: true},
+      repoOwner: {value: null},
+      repo: {value: null},
+      issue: {value: null},
+      comment: {value: null}
+    },
+    inputs: 1,
+    outputs: 2,
+    outputLabels: ["success", "error"],
+    label: function () {
+      return this.name || "send issue comment";
+    },
+    paletteLabel: 'send issue comment'
+  })
+</script>
+
+<script type="text/html" data-template-name="gitea-send-issue-comment">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-integration"><i class="fa fa-tag"></i> Integration</label>
+    <input type="text" id="node-input-integration">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-repo"><i class="fa fa-code-fork"></i> Repo name</label>
+    <input type="text" id="node-input-repo" placeholder="msg.repo">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-repoOwner"><i class="fa fa-building"></i> Repo owner</label>
+    <input type="text" id="node-input-repoOwner" placeholder="msg.repoOwner">
+  </div>
+
+  <hr />
+
+  <div class="form-row">
+    <label for="node-input-issue"><i class="fa fa-hashtag"></i> Issue number</label>
+    <input type="text" id="node-input-issue" placeholder="msg.issue">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-comment"><i class="fa fa-comment"></i> Comment</label>
+    <textarea id="node-input-comment" placeholder="msg.comment" style="width: 70%;"></textarea>
+  </div>
+
+</script>
+
+<script type="text/html" data-help-name="gitea-send-issue-comment">
+  <h3>Details</h3>
+  <p>Add a comment to an existing issue.</p>
+
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>msg.repo
+      <span class="property-type">string</span>
+    </dt>
+    <dd> The repository name for this call</dd>
+
+    <dt>msg.repoOwner
+      <span class="property-type">string</span>
+    </dt>
+    <dd> The owner of the repository, either a user or a company </dd>
+
+    <dt>msg.issue
+      <span class="property-type">int</span>
+    </dt>
+    <dd> Issue number</dd>
+
+    <dt>msg.comment
+      <span class="property-type">string</span>
+    </dt>
+    <dd> Comment to add, markdown allowed</dd>
+  </dl>
+
+  <h3>Outputs</h3>
+  <ol class="node-ports">
+    <li>Success
+      <dl class="message-properties">
+        <dt>msg.payload <span class="property-type">object</span></dt>
+        <dd>Metadata of the added comment</dd>
+      </dl>
+    </li>
+    <li>Error
+      <dl class="message-properties">
+        <dt>msg.error <span class="property-type">string</span></dt>
+        <dd>the error that occurred.</dd>
+      </dl>
+    </li>
+  </ol>
+
+  <h3>API Reference</h3>
+  <a href="https://docs.gitea.com/api/1.20/#tag/issue/operation/issueCreateComment">https://docs.gitea.com/api/1.20/#tag/issue/operation/issueCreateComment</a>
+</script>
